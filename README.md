@@ -34,10 +34,67 @@
    python download_models.py
    ```
 
-3. 启动应用
+3. 启动应用（在SenseVoice目录下）
    ```bash
    python app.py
    ```
+
+## Docker部署与使用
+
+本项目支持通过Docker容器化部署，推荐用于生产环境或快速体验。
+
+### 1. 构建镜像
+
+```bash
+# 在项目根目录下执行
+# 推荐使用国内源加速构建
+# docker build --network=host -t sensevoice:latest .
+docker build -t sensevoice:latest .
+```
+
+### 2. 运行容器
+
+```bash
+docker run -d --name sensevoice \
+  --gpus all \
+  -p 5000:5000 \
+  -v /path/to/your/models/iic:/app/model_cache/models/iic \
+  -v /path/to/your/CosyVoice:/app/CosyVoice \
+  -v /path/to/your/tools:/app/tools \
+  -v /path/to/persistent/outputs:/app/outputs \
+  -v /path/to/persistent/uploads:/app/uploads \
+  sensevoice:latest
+```
+
+- `/path/to/your/models/iic`：ASR和情感识别模型目录
+- `/path/to/your/CosyVoice`：CosyVoice声音克隆模型目录
+- `/path/to/your/tools`：降噪工具和模型目录
+- `/path/to/persistent/outputs`、`/path/to/persistent/uploads`：结果和上传文件持久化目录
+
+### 3. Dockerfile关键路径说明
+
+Dockerfile会自动将`SenseVoice/app.py`、`SenseVoice/templates/`、`SenseVoice/static/`复制到容器内`/app/`目录下。
+
+```dockerfile
+COPY SenseVoice/app.py /app/
+COPY SenseVoice/templates/ /app/templates/
+COPY SenseVoice/static/ /app/static/
+```
+
+### 4. 访问服务
+
+容器启动后，浏览器访问：
+```
+http://localhost:5000
+```
+
+### 5. 常见问题与建议
+
+- 如需GPU加速，需安装NVIDIA驱动和nvidia-docker
+- 可通过`--shm-size=8g`参数提升大模型推理性能
+- 如需自定义模型路径或端口，可通过`-e`环境变量或`-p`参数调整
+- 查看日志：`docker logs sensevoice`
+- 停止/删除容器：`docker stop sensevoice && docker rm sensevoice`
 
 ## 系统架构
 
