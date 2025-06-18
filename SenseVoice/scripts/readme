@@ -1,0 +1,51 @@
+# 执行数据处理脚本
+python scripts/prepare_dialect_data.py \
+  --input /home/chihan/workspace/SenseVoice/data/KeSpeech_Southwestern/Southwestern_transcriptions.txt \
+  --output_dir /home/chihan/workspace/SenseVoice/data/KeSpeech_Southwestern \
+  --audio_dir /home/chihan/workspace/SenseVoice/data/KeSpeech_Southwestern/audio \
+  --language zh \
+  --test_size 0.1 \
+  --emo_label "<|NEUTRAL|>" \
+  --verify
+
+
+python scripts/prepare_dialect_data.py \
+  --input /home/chihan/workspace/SenseVoice/data/KeSpeech_Northeastern/Northeastern_transcriptions.csv \
+  --output_dir /home/chihan/workspace/SenseVoice/data/KeSpeech_Northeastern \
+  --audio_dir /home/chihan/workspace/SenseVoice/data/KeSpeech_Northeastern/audio \
+  --language zh \
+  --test_size 0.1 \
+  --emo_label "<|NEUTRAL|>" \
+  --verify
+
+python scripts/prepare_dialect_data.py \
+  --input /home/chihan/workspace/SenseVoice/data/KeSpeech_Jiang-Huai/Jiang-Huai_transcriptions.csv \
+  --output_dir /home/chihan/workspace/SenseVoice/data/KeSpeech_Jiang-Huai \
+  --audio_dir /home/chihan/workspace/SenseVoice/data/KeSpeech_Jiang-Huai/audio \
+  --language zh \
+  --test_size 0.1 \
+  --emo_label "<|NEUTRAL|>" \
+  --verify
+
+
+python scripts/prepare_dialect_data.py \
+  --input /home/chihan/workspace/SenseVoice/data/KeSpeech_Jiang-Huai/Jiang-Huai_transcriptions.csv \
+  --output_dir /home/chihan/workspace/SenseVoice/data/KeSpeech_Jiang-Huai \
+  --audio_dir /home/chihan/workspace/SenseVoice/data/KeSpeech_Jiang-Huai/audio \
+  --language zh \
+  --test_size 0.1 \
+  --emo_label "<|NEUTRAL|>" \
+  --verify
+========== 数据统计 ==========
+总样本数: 102317
+总音频时长: 9499.41分钟
+  训练集: 8549.94分钟
+  验证集: 949.47分钟
+平均每条文本长度: 14.45字符
+==============================
+
+注 音频这个标题也被写到数据里了
+总数据条数: 102317
+训练集条数: 81853 (80.0%)
+验证集条数: 10232 (10.0%)
+测试集条数: 10232 (10.0%)

@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenseVoice - 低资源语音处理工具包</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 添加jQuery库引用 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --border-radius: 12px;
+        }
+
+        body {
+            padding: 0;
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 5px solid var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+       /* 页面顶部美化 */
+.app-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 2.5rem 0;
+    margin-bottom: 2.5rem;
+    border-bottom: 5px solid var(--accent-color);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* 主标题美化 */
+.app-title {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-weight: 700;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 主标题装饰线 */
+.app-title::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.8);
+    margin: 8px auto 0;
+    border-radius: 2px;
+}
+
+/* 第一个副标题 - 突出显示 */
+.app-subtitle:first-of-type {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.03em;
+}
+
+/* 第二个副标题 - 差异化样式 */
+.app-subtitle:last-child {
+    font-size: 1.1rem;
+    font-weight: 300;
+    opacity: 0.9;
+    padding: 6px 20px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
+    display: inline-block;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .app-title {
+        font-size: 2.2rem;
+    }
+    .app-subtitle:first-of-type {
+        font-size: 1.2rem;
+    }
+    .app-subtitle:last-child {
+        font-size: 0.9rem;
+    }
+}
+
+        .content-wrapper {
+        display: flex;
+        flex: 1;
+        max-width: 1800px; /* 增加最大宽度以适应三列 */
+        margin: 0 auto 2rem;
+        padding: 0 15px;
+        gap: 20px; /* 列之间的间隔 */
+    }
+    .panel-column {
+        flex: 1;
+        min-width: 0; /* 允许收缩 */
+    }
+        .left-panel {
+            flex: 1;
+            margin-right: 1rem;
+            min-width: 0;
+        }
+
+        .right-panel {
+            flex: 1;
+            margin-left: 1rem;
+            min-width: 0;
+        }
+
+        .panel-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(67, 97, 238, 0.2);
+        }
+
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-top-left-radius: var(--border-radius) !important;
+            border-top-right-radius: var(--border-radius) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .upload-section {
+            background: linear-gradient(to right, #ffffff, #f9f9f9);
+            border: 2px dashed #dee2e6;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: var(--primary-color);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 30px;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            background-color: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        .speaker-section {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: #fbfbfb;
+            transition: all 0.3s ease;
+        }
+
+        .speaker-section:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .segment-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #eee;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .segment-item:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .segment-item audio {
+            width: 100%;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+        }
+
+        .recognized-text {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .speaker-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            display: inline-block;
+        }
+
+        .model-badge {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .time-badge {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 为音频播放器添加自定义样式 */
+        audio {
+            border-radius: 30px;
+            background-color: #f8f9fa;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* 滚动条样式 */
+        .speakers-container {
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .speakers-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .speakers-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .speakers-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        .speakers-container::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* 情感标记样式 */
+        .emotion-badge {
+            font-size: 1.5rem;
+            vertical-align: middle;
+        }
+
+        .event-badge {
+            font-size: 1.5rem;
+            vertical-align: middle;
+        }
+
+        /* 情感气泡效果 */
+        .segment-item {
+            position: relative;
+        }
+
+        .segment-item .emotion-badge {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .segment-item:hover .emotion-badge {
+            transform: scale(1.5);
+        }
+
+        /* 说话人情感统计样式 */
+        .speaker-emotions {
+            display: flex;
+            align-items: center;
+        }
+
+        .main-emotion {
+            font-size: 1.8rem;
+            margin-right: 8px;
+        }
+
+        .emotion-stats {
+            display: flex;
+            gap: 4px;
+        }
+
+        .emotion-stat {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+        }
+
+        .emotion-stat:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        /* 现有样式... */
+
+        .emotion-emoji {
+            font-size: 1.5rem;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+        }
+
+        .emotion-emoji:hover {
+            transform: scale(1.5);
+            cursor: help;
+        }
+
+        .event-emoji {
+            font-size: 1.3rem;
+            vertical-align: middle;
+        }
+
+        /* 情感色彩提示 */
+        .segment-item {
+            border-left: 4px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        /* 根据不同情感设置不同边框颜色 */
+        .segment-item[data-emotion="😊"] {
+            border-left-color: #4caf50;
+            /* 开心-绿色 */
+        }
+
+        .segment-item[data-emotion="😡"] {
+            border-left-color: #f44336;
+            /* 生气-红色 */
+        }
+
+        .segment-item[data-emotion="😔"] {
+            border-left-color: #2196f3;
+            /* 伤心-蓝色 */
+        }
+
+        .segment-item[data-emotion="😮"] {
+            border-left-color: #ff9800;
+            /* 惊讶-橙色 */
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1200px) {
+        .content-wrapper {
+            flex-direction: column;
+        }
+        
+        .panel-column {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+            .left-panel,
+            .right-panel {
+                width: 100%;
+                margin: 0 0 1.5rem 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-title {
+                font-size: 1.8rem;
+            }
+
+            .panel-container {
+                padding: 1rem;
+            }
+        }
+
+        footer {
+            margin-top: auto;
+        }
+
+        .emotion-large {
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+
+        .emotion-stat-item {
+            transition: all 0.3s ease;
+        }
+
+        .emotion-stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 添加工具导航区样式 */
+        .tools-nav {
+            padding: 2rem 0;
+            background-color: #f8f9fa;
+            margin: -2rem 0 2rem;
+            border-bottom: 1px solid #eee;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .tool-card {
+            height: 100%;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .tool-icon {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 页面顶部 -->
+    <header class="app-header text-center">
+        <h1 class="app-title">微语之声</h1>
+        <p class="app-subtitle">低资源语音处理工具包</p>
+        <p class="app-subtitle">支持方言识别、说话人分离、情感检测与语音克隆</p>
+    </header>
+
+    <!-- 工具导航区 - 新增 -->
+    <div class="tools-nav">
+        <div class="container">
+            <div class="row justify-content-center">
+                <!-- 语音识别工具卡片 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-microphone fa-3x mb-3 tool-icon"></i>
+                            <h5 class="card-title">语音识别与分离</h5>
+                            <p class="card-text">上传音频，识别语音内容并分离说话人</p>
+                            <a href="#uploadForm" class="btn btn-primary">
+                                <i class="fas fa-arrow-down me-1"></i>开始使用
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 声音克隆工具卡片 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clone fa-3x mb-3 tool-icon"></i>
+                            <h5 class="card-title">声音克隆</h5>
+                            <p class="card-text">使用参考音频克隆说话人声音进行合成</p>
+                            <a href="#cloneSection" class="btn btn-primary">
+                                <i class="fas fa-arrow-down me-1"></i>查看克隆
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 降噪工具卡片 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-filter fa-3x mb-3 tool-icon"></i>
+                            <h5 class="card-title">音频降噪</h5>
+                            <p class="card-text">去除背景噪音、混响和回音，提高声音清晰度</p>
+                            <a href="/denoise_page" class="btn btn-primary">
+                                <i class="fas fa-arrow-right me-1"></i>前往降噪工具
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 左右分布的主内容区 -->
+    <div class="content-wrapper">
+        <!-- 左侧面板：上传和识别结果 -->
+        <div class="left-panel">
+            <div class="panel-container">
+                <h2 class="panel-title"><i class="fas fa-microphone-alt me-2"></i>音频上传与识别结果</h2>
+
+                <!-- 上传部分 -->
+                <div class="upload-section mb-4" id="uploadForm">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3 class="mb-3">上传音频文件</h3>
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <input type="file" class="form-control" id="audioFile" name="file"
+                                accept=".mp3,.m4a,.aac,.ogg,.wav,.flac,.wma,.aif,.mp4,.avi,.mov,.mkv">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="modelSelect" class="form-label">选择识别模型</label>
+                                <select class="form-select" id="modelSelect" name="model">
+                                    <!-- 通过JS动态填充 -->
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="splitNumber" class="form-label">分段字数设置</label>
+                                <input type="number" class="form-control" id="splitNumber" name="split_number" min="5"
+                                    max="50" value="20">
+                            </div>
+                        </div>
+
+                        <!-- 添加降噪选项 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enableDenoise"
+                                        name="enable_denoise">
+                                    <label class="form-check-label" for="enableDenoise">
+                                        <i class="fas fa-filter me-2"></i>启用音频降噪
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card-body" id="denoiseOptions" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <label for="denoiseModel" class="form-label">降噪模型</label>
+                                        <select class="form-select form-select-sm" id="denoiseModel"
+                                            name="denoise_model">
+                                            <option value="HP5" selected>人声优化 (标准)</option>
+                                            <option value="VR-DeEcho-DeReverb">去混响与回音</option>
+                                            <option value="VR-DeEcho">仅去回音</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label for="denoiseLevel" class="form-label">降噪强度</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="range" class="form-range me-2" id="denoiseLevel"
+                                                name="denoise_level" min="0" max="20" value="10">
+                                            <span id="denoiseLevelValue">10</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text text-muted">
+                                    <i class="fas fa-info-circle"></i>
+                                    降噪将在音频上传后自动处理，识别将使用降噪后的音频
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="previewContainer" class="mb-3" style="display:none;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-play-circle me-2"></i>音频预览
+                                </div>
+                                <div class="card-body">
+                                    <audio id="audioPreview" controls></audio>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>开始识别
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 处理中状态 -->
+                <div class="progress-container hidden card" id="progressContainer">
+                    <div class="card-header">
+                        <i class="fas fa-spinner fa-spin me-2"></i>处理中
+                    </div>
+                    <div class="card-body">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%">
+                            </div>
+                        </div>
+                        <p class="text-center mt-3" id="progressText">正在处理，请稍候...</p>
+                    </div>
+                </div>
+
+                <!-- 错误提示 -->
+                <div class="alert alert-danger hidden mt-4" id="errorContainer">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle me-3" style="font-size: 1.5rem;"></i>
+                        <p class="mb-0" id="errorMessage"></p>
+                    </div>
+                </div>
+
+                <!-- 识别结果文本 -->
+                <div class="result-text-container hidden fade-in" id="resultTextContainer">
+                    <div class="alert alert-success" id="successMessage"></div>
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-check-circle me-2"></i>识别结果</span>
+                            <div class="model-badge" id="modelBadge"></div>
+                        </div>
+                        <div class="card-body">
+                            <h4>识别文本</h4>
+                            <div class="recognized-text" id="recognizedText"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧面板：说话人分离结果 -->
+        <div class="right-panel">
+            <div class="panel-container">
+                <h2 class="panel-title"><i class="fas fa-users me-2"></i>说话人分离结果</h2>
+
+                <!-- 说话人分离结果 -->
+                <div class="speakers-container hidden fade-in" id="speakersResultContainer">
+                    <div id="speakersContainer"></div>
+                </div>
+
+                <!-- 未开始识别状态 -->
+                <div class="text-center py-5" id="noResultsMessage">
+                    <i class="fas fa-microphone-slash text-muted" style="font-size: 3rem;"></i>
+                    <p class="mt-3 text-muted">上传音频并点击识别按钮，<br>查看说话人分离结果</p>
+                </div>
+
+                <!-- 情感统计部分 -->
+                <div class="emotion-summary mb-4 fade-in hidden" id="emotionSummaryContainer">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie me-2"></i>情感分布统计
+                        </div>
+                        <div class="card-body">
+                            <div id="emotionSummary" class="d-flex flex-wrap justify-content-center"></div>
+                        </div>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        <div class="panel-column">
+            <div class="panel-container">
+                <h2 class="panel-title"><i class="fas fa-clone me-2"></i>声音克隆</h2>
+        
+                <!-- 声音克隆部分 -->
+                <div id="cloneSection" style="display: none;">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        使用说话人声音合成您指定的文本内容
+                    </div>
+        
+                    <div class="mb-3">
+                        <label for="cloneText" class="form-label">输入要合成的文本:</label>
+                        <textarea class="form-control" id="cloneText" rows="3" placeholder="请输入要用选定说话人声音合成的文本..."></textarea>
+                    </div>
+        
+                    <div class="mb-3">
+                        <label class="form-label">选择声音来源:</label>
+                        <div class="d-flex align-items-center">
+                            <select class="form-select me-2" id="cloneSpeaker">
+                                <option value="" disabled selected>请先上传音频并识别...</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-secondary" id="previewSpeakerVoice">
+                                <i class="fas fa-play me-1"></i>试听
+                            </button>
+                        </div>
+                    </div>
+        
+                    <button class="btn btn-primary" id="cloneButton">
+                        <i class="fas fa-clone me-1"></i> 开始克隆
+                    </button>
+        
+                    <!-- 克隆结果区域 -->
+                    <div class="card mt-3" id="cloneResult" style="display: none;">
+                        <div class="card-body">
+                            <h6><i class="fas fa-check-circle me-2 text-success"></i>克隆结果:</h6>
+                            <div class="d-flex align-items-center">
+                                <audio id="clonedAudio" controls class="w-100 me-2"></audio>
+                                <button class="btn btn-sm btn-outline-secondary" id="downloadCloned">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- 克隆处理中状态 -->
+                    <div class="card mt-3" id="cloneProcessing" style="display: none;">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="spinner-border text-primary me-3" role="status">
+                                    <span class="visually-hidden">处理中...</span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">正在处理声音克隆...</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- 未上传音频时显示的提示 -->
+                <div id="cloneEmptyState">
+                    <div class="text-center py-5">
+                        <i class="fas fa-microphone-alt text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3">完成说话人分离后，<br>可以使用选定说话人的声音进行克隆</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light py-3 text-center">
+        <p class="mb-0">© 2025 SenseVoice - 强大的方言识别与说话人分离系统</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 页面加载时获取模型列表
+        window.addEventListener('DOMContentLoaded', function () {
+            fetch('/models')
+                .then(response => response.json())
+                .then(data => {
+                    const modelSelect = document.getElementById('modelSelect');
+                    data.models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.id;
+                        option.textContent = model.name;
+                        option.selected = model.default;
+                        modelSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('获取模型列表失败:', error);
+                });
+        });
+
+        // 控制降噪选项的显示和隐藏
+        document.getElementById('enableDenoise').addEventListener('change', function (e) {
+            const denoiseOptions = document.getElementById('denoiseOptions');
+            if (this.checked) {
+                denoiseOptions.style.display = 'block';
+            } else {
+                denoiseOptions.style.display = 'none';
+            }
+        });
+
+        // 显示降噪级别值
+        document.getElementById('denoiseLevel').addEventListener('input', function (e) {
+            document.getElementById('denoiseLevelValue').textContent = this.value;
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('audioFile');
+            if (!fileInput.files.length) {
+                showError('请选择文件');
+                return;
+            }
+
+            // 显示进度
+            document.getElementById('progressContainer').classList.remove('hidden');
+            document.getElementById('resultTextContainer').classList.add('hidden');
+            document.getElementById('errorContainer').classList.add('hidden');
+            document.getElementById('noResultsMessage').classList.add('hidden');
+            document.getElementById('speakersResultContainer').classList.add('hidden');
+
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('split_number', document.getElementById('splitNumber').value);
+            formData.append('model', document.getElementById('modelSelect').value);
+
+            // 添加降噪参数
+            const enableDenoise = document.getElementById('enableDenoise').checked;
+            formData.append('enable_denoise', enableDenoise);
+
+            if (enableDenoise) {
+                formData.append('denoise_model', document.getElementById('denoiseModel').value);
+                formData.append('denoise_level', document.getElementById('denoiseLevel').value);
+            }
+
+            // 更新进度文本
+            const progressText = document.getElementById('progressText');
+            if (enableDenoise) {
+                progressText.textContent = '正在上传并进行降噪处理，请稍候...';
+            } else {
+                progressText.textContent = '正在处理，请稍候...';
+            }
+
+            // 发送请求
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('progressContainer').classList.add('hidden');
+
+                    if (data.status === 'success') {
+                        showResult(data);
+                    } else {
+                        showError(data.message);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('progressContainer').classList.add('hidden');
+                    showError('处理请求失败: ' + error);
+                });
+        });
+
+        // 文件选择变化时预览音频
+        document.getElementById('audioFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // 检查文件是否是音频文件
+            const audioFormats = ['.mp3', '.m4a', '.aac', '.ogg', '.wav', '.flac', '.wma', '.aif'];
+            const videoFormats = ['.mp4', '.avi', '.mov', '.mkv'];
+            const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+            if (audioFormats.includes(fileExt) || videoFormats.includes(fileExt)) {
+                const audioPreview = document.getElementById('audioPreview');
+                const previewContainer = document.getElementById('previewContainer');
+
+                // 创建临时URL并设置给audio元素
+                audioPreview.src = URL.createObjectURL(file);
+                previewContainer.style.display = 'block';
+            }
+        });
+
+        // 声音克隆相关函数
+        function setupCloneUI(speakers, date, audioName) {
+                // 先获取元素引用
+                const cloneEmptyState = document.getElementById('cloneEmptyState');
+                const cloneSection = document.getElementById('cloneSection');
+
+                // 检查元素是否存在
+                if (!cloneEmptyState || !cloneSection) {
+                    console.error('声音克隆界面元素未找到:', {
+                        'cloneEmptyState存在': !!cloneEmptyState,
+                        'cloneSection存在': !!cloneSection
+                    });
+                    return; // 如果元素不存在，退出函数
+                }
+
+                // 确认元素存在后再操作
+                cloneEmptyState.style.display = 'none';
+                cloneSection.style.display = 'block';
+
+                // 重置结果区域
+                document.getElementById('cloneResult').style.display = 'none';
+                document.getElementById('cloneProcessing').style.display = 'none';
+
+
+                // 清空并填充说话人选择器
+                const speakerSelect = document.getElementById('cloneSpeaker');
+                speakerSelect.innerHTML = '';
+
+                // 如果没有检测到说话人，添加提示选项
+                if (!speakers || speakers.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = '未检测到说话人';
+                    option.disabled = true;
+                    speakerSelect.appendChild(option);
+                    return;
+                }
+
+                // 添加所有说话人选项
+                speakers.forEach(spk => {
+                    const option = document.createElement('option');
+                    option.value = spk;
+                    option.textContent = `说话人 ${spk}`;
+                    speakerSelect.appendChild(option);
+                });
+
+                // 试听按钮点击事件
+                document.getElementById('previewSpeakerVoice').onclick = function () {
+                    const speakerId = speakerSelect.value;
+                    if (!speakerId) return;
+
+                    // 查找当前选中说话人的第一个音频片段并播放
+                    const audioElements = document.querySelectorAll(`#speaker-${speakerId}-segments audio`);
+                    if (audioElements.length > 0) {
+                        audioElements[0].play();
+                    }
+                };
+
+                // 绑定克隆按钮事件
+                document.getElementById('cloneButton').onclick = function () {
+                    const text = document.getElementById('cloneText').value;
+                    const speakerId = speakerSelect.value;
+
+                    if (!text) {
+                        alert('请输入要合成的文本');
+                        return;
+                    }
+
+                    // 显示处理中状态
+                    document.getElementById('cloneButton').disabled = true;
+                    document.getElementById('cloneProcessing').style.display = 'block';
+                    document.getElementById('cloneResult').style.display = 'none';
+
+                    // 发送克隆请求
+                    fetch('/clone', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            speaker_id: speakerId,
+                            text: text,
+                            date: date,
+                            audio_name: audioName
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('cloneProcessing').style.display = 'none';
+                            document.getElementById('cloneButton').disabled = false;
+
+                            if (data.status === 'success') {
+                                // 显示结果
+                                document.getElementById('cloneResult').style.display = 'block';
+                                document.getElementById('clonedAudio').src = data.audio_url;
+                                document.getElementById('clonedAudio').play();
+
+                                // 设置下载链接
+                                document.getElementById('downloadCloned').onclick = function () {
+                                    const downloadLink = document.createElement('a');
+                                    downloadLink.href = data.audio_url;
+                                    downloadLink.download = `克隆语音_${speakerId}.wav`;
+                                    document.body.appendChild(downloadLink);
+                                    downloadLink.click();
+                                    document.body.removeChild(downloadLink);
+                                };
+                            } else {
+                                alert('声音克隆失败: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            document.getElementById('cloneProcessing').style.display = 'none';
+                            document.getElementById('cloneButton').disabled = false;
+                            alert('请求失败: ' + error);
+                        });
+                };
+            }
+
+        function showResult(data) {
+            // 显示识别文本结果
+            document.getElementById('resultTextContainer').classList.remove('hidden');
+            document.getElementById('successMessage').textContent = data.message;
+
+            if (data.model) {
+                document.getElementById('modelBadge').textContent = '使用模型: ' + data.model;
+            }
+
+            document.getElementById('recognizedText').textContent = data.text;
+
+            // 显示说话人分离结果
+            document.getElementById('speakersResultContainer').classList.remove('hidden');
+            document.getElementById('noResultsMessage').classList.add('hidden');
+
+            // 创建说话人部分
+            const speakersContainer = document.getElementById('speakersContainer');
+            speakersContainer.innerHTML = '';
+
+            // 按说话人分组显示所有片段
+            if (data.segments && Array.isArray(data.segments)) {
+                data.segments.sort((a, b) => a.start.localeCompare(b.start));
+            }
+
+            // 创建一个用于存储所有说话人ID的集合
+            let allSpeakers = new Set();
+
+            // 确保从segments中收集所有说话人ID
+            if (data.segments && Array.isArray(data.segments)) {
+                data.segments.forEach(segment => {
+                    if (segment && segment.spk !== undefined) {
+                        allSpeakers.add(segment.spk);
+                    }
+                });
+            }
+
+            // 如果speakers数组存在，将其中的说话人也加入集合
+            if (data.speakers && Array.isArray(data.speakers)) {
+                data.speakers.forEach(speaker => {
+                    allSpeakers.add(speaker);
+                });
+            }
+
+            // 将集合转换为数组并排序
+            const speakersList = Array.from(allSpeakers).sort((a, b) => Number(a) - Number(b));
+
+            let speakerSections = {};
+
+            // 为每个说话人创建一个部分
+            speakersList.forEach(speaker => {
+                const speakerDiv = document.createElement('div');
+                speakerDiv.className = 'speaker-section mb-4';
+                speakerDiv.innerHTML = `
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="speaker-badge me-2">说话人 ${speaker}</div>
+                        <div id="speaker-${speaker}-emotions" class="speaker-emotions mx-2"></div>
+                        <div class="flex-grow-1 border-bottom"></div>
+                    </div>
+                    <div class="segments-container" id="speaker-${speaker}-segments"></div>
+                `;
+                speakersContainer.appendChild(speakerDiv);
+                speakerSections[speaker] = document.getElementById(`speaker-${speaker}-segments`);
+            });
+
+            // 为每个片段创建一个音频播放器
+            if (data.segments && Array.isArray(data.segments)) {
+                data.segments.forEach(segment => {
+                    if (segment && segment.url && segment.spk !== undefined) {
+                        const segmentDiv = document.createElement('div');
+                        segmentDiv.className = 'segment-item';
+
+                        // 添加情感属性用于CSS样式
+                        if (segment.emotion) {
+                            segmentDiv.setAttribute('data-emotion', segment.emotion);
+                        }
+
+                        segmentDiv.innerHTML = `
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="time-badge">${segment.start} - ${segment.end}</span>
+                                    ${segment.events ? `<span class="event-emoji ms-2">${segment.events}</span>` : ''}
+                                </div>
+                                <div>
+                                    <a href="${segment.url}" class="btn btn-sm btn-outline-primary" download>
+                                        <i class="fas fa-download me-1"></i>下载
+                                    </a>
+                                </div>
+                            </div>
+                            <audio controls src="${segment.url}" class="mb-2"></audio>
+                            <p class="mb-0 p-2 bg-light rounded">
+                                ${segment.text} 
+                                ${segment.emotion ? `<span class="emotion-emoji ms-2" title="情感">${segment.emotion}</span>` : ''}
+                            </p>
+                        `;
+
+                        if (speakerSections[segment.spk]) {
+                            speakerSections[segment.spk].appendChild(segmentDiv);
+                        }
+                    }
+                });
+            }
+
+            // 为每个说话人统计情感分布
+            updateSpeakerEmotions(data, speakersList);
+
+            // 确保情感统计框保持隐藏状态
+            const emotionSummaryContainer = document.getElementById('emotionSummaryContainer');
+            if (emotionSummaryContainer) {
+                emotionSummaryContainer.classList.add('hidden');
+            }
+
+          // 在现有代码的最后，添加初始化克隆UI的调用
+            if (data.segments && data.segments.length > 0) {
+                const speakersList = data.speakers || [];
+
+                // 获取音频路径中的日期和音频名称信息
+                // 示例路径: /audio/2025-06-01/recording_name/0/1.mp3
+                const pathParts = data.segments[0].url.split('/');
+                if (pathParts.length >= 4) {
+                    const date = pathParts[2];
+                    const audioName = pathParts[3];
+
+                    // 初始化克隆UI
+                    setupCloneUI(speakersList, date, audioName);
+                }
+            }
+        }
+
+        // 修改 updateSpeakerEmotions 函数
+        function updateSpeakerEmotions(data, speakersList) {
+            // 参数化数据，不再依赖全局变量
+
+            // 为每个说话人计算情感分布
+            speakersList.forEach(speaker => {
+                let emotionCounts = {};
+                let totalEmotions = 0;
+
+                // 计算该说话人的情感频率
+                data.segments.forEach(segment => {
+                    if (segment.spk == speaker && segment.emotion) {
+                        emotionCounts[segment.emotion] = (emotionCounts[segment.emotion] || 0) + 1;
+                        totalEmotions++;
+                    }
+                });
+
+                // 找出主要情感
+                let mainEmotion = '';
+                let maxCount = 0;
+                for (const [emotion, count] of Object.entries(emotionCounts)) {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        mainEmotion = emotion;
+                    }
+                }
+
+                // 显示情感统计
+                const emotionContainer = document.getElementById(`speaker-${speaker}-emotions`);
+                if (emotionContainer) {
+                    let emotionHTML = '';
+
+                    // 添加主要情感
+                    if (mainEmotion) {
+                        emotionHTML += `<span class="main-emotion" title="主要情感">${mainEmotion}</span>`;
+                    }
+
+                    // 添加所有情感统计
+                    emotionHTML += '<div class="emotion-stats">';
+                    for (const [emotion, count] of Object.entries(emotionCounts)) {
+                        const percentage = Math.round((count / totalEmotions) * 100);
+                        emotionHTML += `<span class="emotion-stat" title="${percentage}%">${emotion}</span>`;
+                    }
+                    emotionHTML += '</div>';
+
+                    emotionContainer.innerHTML = emotionHTML;
+                }
+            });
+        }
+
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            const errorMessage = document.getElementById('errorMessage');
+
+            errorContainer.classList.remove('hidden');
+            errorMessage.textContent = message;
+        }
+    </script>
+</body>
+
+</html>
