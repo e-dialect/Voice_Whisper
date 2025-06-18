@@ -460,3 +460,10 @@ CosyVoice/
 - [UVR5](https://github.com/Anjok07/ultimatevocalremovergui)
 - [CosyVoice](https://github.com/thuhcsi/CosyVoice)
 
+## 第三方库说明
+
+本项目部分功能依赖以下第三方库：
+
+- [Matcha-TTS](https://github.com/Matcha-TTS/Matcha-TTS)
+  已集成于 `SenseVoice/CosyVoice/third_party/Matcha-TTS` 目录，原项目地址见上方链接。
+

@@ -41,6 +41,10 @@ COPY SenseVoice/app.py /app/
 COPY SenseVoice/templates/ /app/templates/
 COPY SenseVoice/static/ /app/static/
 
+# 复制第三方库Matcha-TTS（如有需要可在此处添加）
+# Matcha-TTS 已集成于 SenseVoice/CosyVoice/third_party/Matcha-TTS
+# 容器内路径为 /app/SenseVoice/CosyVoice/third_party/Matcha-TTS
+
 # 创建模型目录路径
 RUN mkdir -p /app/model_cache/models/iic/
 
