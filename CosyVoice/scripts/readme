@@ -1,0 +1,9 @@
+数据处理阶段（即完成了阶段0到阶段3，已经有了parquet格式的数据和训练列表
+应该从阶段4开始运行微调脚本。
+
+
+
+ python tools/make_parquet_list.py --num_utts_per_parquet 100 \
+      --num_processes 4 \
+      --src_dir /home/chihan/workspace/CosyVoice/data/northeastern_val \
+      --des_dir /home/chihan/workspace/CosyVoice/data/northeastern_val/parquet

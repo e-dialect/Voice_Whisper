@@ -1,0 +1,57 @@
+# 继承基础配置
+inherit: ./cosyvoice2.yaml
+
+# 修改微调特定参数
+train_conf:
+  # 降低批次大小以适应微调
+  batch_size: 4
+  # 减少训练轮数
+  max_epoch: 30
+  # 增加梯度累积步数，补偿较小的批次大小
+  accum_grad: 4
+  # 保持梯度裁剪
+  grad_clip: 5.0
+  
+  # 优化器配置
+  optim: adamw
+  optim_conf:
+    # 降低学习率，微调一般用较小学习率
+    lr: 0.00005  # 原始学习率的1/10
+    weight_decay: 0.01
+    
+  # 学习率调度器
+  scheduler: noamhold
+  scheduler_conf:
+    # 减少预热步数
+    warmup_steps: 500
+    
+  # 检查点保存
+  checkpoint_conf:
+    # 更频繁保存检查点
+    every_n_val: 5
+
+# 数据增强，微调时减少增强强度
+spec_augment: !name:cosyvoice.dataset.spec_augment.SpecAugment
+  time_warp: false  # 关闭时间扭曲
+  freq_mask: true
+  freq_mask_param: 10  # 减小频率掩码参数
+  n_freq_mask: 1       # 减少频率掩码数量
+  time_mask: true
+  time_mask_param: 10  # 减小时间掩码参数
+  n_time_mask: 1       # 减少时间掩码数量
+
+# 过滤器参数，适应东北方言数据
+filter:
+  max_length: 40960
+  min_length: 0
+  token_max_length: 200
+  token_min_length: 1
+
+# 数据处理相关
+shuffle:
+  shuffle_size: 500  # 减小shuffle缓冲区大小以节省内存
+sort:
+  sort_size: 250     # 减小排序缓冲区大小
+batch:
+  batch_type: 'dynamic'
+  max_frames_in_batch: 1500  # 减小以适应GPU内存
